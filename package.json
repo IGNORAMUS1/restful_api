@@ -9,6 +9,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "json-server": "^1.0.0-beta.3",
     "pg": "^8.16.3"

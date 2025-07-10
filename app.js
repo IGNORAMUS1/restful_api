@@ -1,5 +1,8 @@
 const express = require("express")
 const { Client } = require("pg")
+const dotenv = require('dotenv').config()
+
+const password = process.env.password
 
 
 const app = express()
@@ -11,7 +14,7 @@ const client = new Client({
     host: "localhost",
     database: "test",
     port: "5432",
-    password: "IGN321@pg"
+    password
 })
 
 const connect = client.connect()
