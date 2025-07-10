@@ -22,18 +22,24 @@ connect.then(()=>{
     console.log(`database connected`)
 })
 
-app.get('/getAllUsers', (req, res) => {
-    const allUsers = client.query('SELECT * FROM person',(err, result)=>{
+app.get('/getAllUsers', async (req, res) => {
+    try {
+        const allUsers = client.query('SELECT * FROM person',(err, result)=>{
         if(err) {
             res.send(err)
         } else {
             res.send(result.rows)
         }
     })
+    } catch (error) {
+        res.send(error)
+    }
 })
 
-app.get('/getUser/:id', (req, res) => {
-    const id = req.params.id
+app.get('/getUser/:id', async (req, res) => {
+
+   try{
+     const id = req.params.id
     const user = client.query('SELECT * FROM person WHERE id = $1', [id], (err, result)=>{
         if(err) {
             res.send(err)
@@ -41,11 +47,17 @@ app.get('/getUser/:id', (req, res) => {
             res.send(`User with the specified id does not exist.`)
         } else res.send(result.rows)
     })
+   } catch(error) {
+    res.send(error)
+   }
 })
 
-app.post('/createUser', (req, res) => {
-    
+app.post('/createUser', async (req, res) => {
+
     const { first_name, last_name, email, gender, date_of_birth, country_of_birth } = req.body
+    
+    try {
+       
     const newUser = client.query('INSERT INTO person (first_name, last_name, email, gender, date_of_birth, country_of_birth) VALUES ($1, $2, $3, $4, $5, $6)', 
         [first_name, last_name, email, gender, date_of_birth, country_of_birth], (err, result)=>{
             if(err) {
@@ -54,13 +66,18 @@ app.post('/createUser', (req, res) => {
                 res.send(`New user has been added successfully.`)
             }
         })
+    } catch (error) {
+        res.send(error)
+    }
 })
 
-app.put('/updateUser/:id',(req, res)=>{
+app.put('/updateUser/:id', async (req, res)=>{
     const id = req.params.id
     const last_name = req.body.last_name
 
-    client.query('UPDATE person SET last_name = $1 WHERE id = $2', [last_name, id], (err, result)=>{
+    try {
+
+        client.query('UPDATE person SET last_name = $1 WHERE id = $2', [last_name, id], (err, result)=>{
         if(err){
             res.send(err)
         } else if(result.rowCount == 0) {
@@ -71,11 +88,18 @@ app.put('/updateUser/:id',(req, res)=>{
             })
         }
     })
+    } catch (error) {
+        res.send(error)
+    }
 })
 
 app.delete('/deleteUser/:id', (req, res) => {
+
     const id = req.params.id
-    client.query('DELETE FROM person WHERE id = $1', [id], (err, result) => {
+
+    try {
+
+        client.query('DELETE FROM person WHERE id = $1', [id], (err, result) => {
         if(err) {
             res.send(err)
         } else if (result.rowCount > 0){
@@ -84,6 +108,11 @@ app.delete('/deleteUser/:id', (req, res) => {
             res.send(`user does not exist.`)
         }
     })
+
+    } catch (error) {
+        res.send(error)
+    }
+    
 })
 
 app.listen(5000, () => {
